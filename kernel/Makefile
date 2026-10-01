@@ -12,7 +12,7 @@ CORE_OBJECTS := \
 	$(BUILD)/irq/irq.o \
 	$(BUILD)/irq/trampoline.o \
 	$(BUILD)/lib/kprintf.o \
-	$(BUILD)/shell/shell.o
+	$(BUILD)/shell/msh.o
 RUNTIME_OBJECTS := \
 	$(BUILD)/runtime/block.o \
 	$(BUILD)/runtime/exception.o \
