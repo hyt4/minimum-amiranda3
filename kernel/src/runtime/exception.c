@@ -16,6 +16,12 @@ __attribute__((weak, noreturn)) void minemu_svc_trampoline(void) {
     minemu_fail_stop();
 }
 
+/*
+ * Weak IRQ placeholders. The kernel links its real trampoline and dispatcher
+ * (src/irq/) as direct objects, which override these. They stay here because
+ * the examples link this archive too, and an example without IRQ code still
+ * needs the symbol that vectors.S branches to.
+ */
 __attribute__((weak, noreturn)) void minemu_irq_trampoline(void) {
     minemu_fail_stop();
 }
