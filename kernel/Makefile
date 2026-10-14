@@ -12,7 +12,11 @@ CORE_OBJECTS := \
 	$(BUILD)/irq/irq.o \
 	$(BUILD)/irq/trampoline.o \
 	$(BUILD)/lib/kprintf.o \
-	$(BUILD)/shell/msh.o
+	$(BUILD)/mm/page.o \
+	$(BUILD)/syscall/svc.o \
+	$(BUILD)/syscall/syscall.o \
+	$(BUILD)/user/enter.o \
+	$(BUILD)/user/uspace.o
 RUNTIME_OBJECTS := \
 	$(BUILD)/runtime/block.o \
 	$(BUILD)/runtime/exception.o \
@@ -27,6 +31,7 @@ DEPENDENCIES := $(OBJECTS:.o=.d)
 ARCH_FLAGS := -mcpu=cortex-a9 -marm -mfloat-abi=soft
 CPPFLAGS := -Iinclude
 CFLAGS := $(ARCH_FLAGS) \
+	-O2 \
 	-ffreestanding \
 	-fno-builtin \
 	-fdata-sections \
@@ -71,7 +76,7 @@ $(BUILD)/core/%.o: src/core/%.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-# Kernel sources outside core/, runtime/ and startup/ (drivers/, irq/, lib/, shell/, ...).
+# Kernel sources outside core/, runtime/ and startup/ (drivers/, irq/, lib/, mm/, syscall/, user/).
 $(BUILD)/%.o: src/%.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@

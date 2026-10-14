@@ -25,6 +25,23 @@
 #define MINEMU_IOCTL_RNG_SEED 0x00000203
 #define MINEMU_IOCTL_TRACE_EVENT 0x00000301
 
+/*
+ * Device-address form of the same interface (the HW2 handout's table): the
+ * fd is the peripheral's MMIO base and the op is a small per-device index.
+ * The kernel accepts both forms; a device-address fd takes either its
+ * handout op numbers or the MINEMU_IOCTL_* requests above.
+ */
+#define MINEMU_IOCTL_FD_RNG 0x10003000
+#define MINEMU_IOCTL_FD_UART0 0x10004000
+#define MINEMU_IOCTL_FD_UART1 0x10005000
+#define MINEMU_IOCTL_FD_TRACE 0x1000f000
+
+#define MINEMU_IOCTL_OP_RNG_SET_SEED 0x0
+#define MINEMU_IOCTL_OP_RNG_GET_DATA 0x1
+#define MINEMU_IOCTL_OP_UART_READ 0x0
+#define MINEMU_IOCTL_OP_UART_WRITE 0x1
+#define MINEMU_IOCTL_OP_TRACE_EVENT 0x0
+
 #define MINEMU_IOCTL_UART_RX_READY 1
 #define MINEMU_IOCTL_UART_TX_READY 2
 #define MINEMU_IOCTL_MAX_TRANSFER 256

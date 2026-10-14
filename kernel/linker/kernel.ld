@@ -56,6 +56,10 @@ SECTIONS
     __minemu_und_stack_top = .;
   } :kernel
 
+  /* First page after the kernel image: the page allocator's free memory. */
+  . = ALIGN(4096);
+  __minemu_kernel_end = .;
+
   __minemu_svc_stack_top_paddr = __minemu_svc_stack_top - 0x80000000;
   __minemu_irq_stack_top_paddr = __minemu_irq_stack_top - 0x80000000;
   __minemu_abt_stack_top_paddr = __minemu_abt_stack_top - 0x80000000;

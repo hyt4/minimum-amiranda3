@@ -57,9 +57,20 @@ void uart_rx_isr(void) {
     }
 }
 
-int uart_try_getc(void) {
-    int c = -1;
+uint32_t uart_rx_count(void) {
+    return rx_head - rx_tail;
+}
 
+int uart_rx_pop(void) {
+    int c = -1;
+    if (rx_tail != rx_head) {
+        c = (int)(uint8_t)rx_buffer[rx_tail % RX_BUFFER_SIZE];
+        ++rx_tail;
+    }
+    return c;
+}
+
+int uart_try_getc(void) {
     /*
      * Mask IRQs while touching the shared buffer so uart_rx_isr cannot run in
      * the middle of our check-and-take and leave us with a stale view of
@@ -67,10 +78,7 @@ int uart_try_getc(void) {
      * compiler from caching rx_head/rx_tail across this critical section.
      */
     minemu_irq_disable();
-    if (rx_tail != rx_head) {
-        c = (int)(uint8_t)rx_buffer[rx_tail % RX_BUFFER_SIZE];
-        ++rx_tail;
-    }
+    int c = uart_rx_pop();
     minemu_irq_enable();
 
     return c;
@@ -90,4 +98,17 @@ char uart_getc(void) {
             return (char)c;
         }
     }
+}
+
+void uart1_putc(char c) {
+    while ((MINEMU_UART1->status & MINEMU_UART_STATUS_TX_READY) == 0) {
+    }
+    MINEMU_UART1->tx_data = (uint32_t)(uint8_t)c;
+}
+
+int uart1_try_getc(void) {
+    if ((MINEMU_UART1->status & MINEMU_UART_STATUS_RX_READY) == 0) {
+        return -1;
+    }
+    return (int)(MINEMU_UART1->rx_data & UINT32_C(0xff));
 }

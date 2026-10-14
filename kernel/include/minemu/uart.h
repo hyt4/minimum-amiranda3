@@ -1,8 +1,10 @@
 #ifndef MINEMU_UART_H
 #define MINEMU_UART_H
 
+#include <stdint.h>
+
 /*
- * Driver for the console UART (UART0).
+ * Driver for the console UART (UART0), plus polled helpers for UART1.
  *
  * Transmit is polled: uart_putc() busy-waits on TX_READY.
  * Receive is interrupt-driven: uart_rx_isr() moves bytes from the device into
@@ -41,10 +43,26 @@ void uart_puts(const char *s);
  */
 int uart_try_getc(void);
 
+/*
+ * Same as uart_try_getc, for callers that already run with IRQs masked
+ * (the SVC handler). Leaves the IRQ mask alone.
+ */
+int uart_rx_pop(void);
+
+/* Number of bytes waiting in the receive buffer. Call with IRQs masked. */
+uint32_t uart_rx_count(void);
+
 /* Wait until a byte has been buffered, then return it. Call with IRQs enabled. */
 char uart_getc(void);
 
 /* UART0 RX interrupt handler: drain the device into the buffer. */
 void uart_rx_isr(void);
+
+/*
+ * UART1, the secondary port. Fully polled: its RX interrupt is never
+ * enabled, so bytes are read straight from the device.
+ */
+void uart1_putc(char c);
+int uart1_try_getc(void); /* next byte (0-255), or -1 if none is waiting */
 
 #endif
